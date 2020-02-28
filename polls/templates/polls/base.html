@@ -25,12 +25,24 @@
               <li class="nav-item">
                 <a class="nav-link" href="#">New Poll</a>
               </li>
+<!--
               <li class="nav-item">
-                <a class="nav-link" href="#" tabindex="-1"><i class="fa fa-user" aria-hidden="true"></i></a>
+                <a class="nav-link" href="#" tabindex="-1">User</a>
               </li>
+-->
+           <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dropdown
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search">
+            <form class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
+              <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" style="width: calc(100% - 90px)">
               <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
             </form>
           </div>
@@ -40,6 +52,29 @@
     {% endblock %}
     <script src="{% static 'polls\jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'polls\bootstrap.min.js' %}"></script>
+    <script>
+        let form = $('form');
+        let searchBar = $('input[type = "search"]');
+        let navBar = $('nav');
+        // Changes the width of the form and input field when it reaches a certin level
+        if( window.innerWidth < 767 ){
+                form.css('width','auto');
+            }
+            else{
+                form.css('width','calc(100% - 250px)');
+            }
+            console.log(window.innerWidth)
+        
+        window.onresize = () => {
+            if( window.innerWidth < 767 ){
+                form.css('width','auto');
+            }
+            else{
+                form.css('width','calc(100% - 250px)');
+            }
+            console.log(window.innerWidth)
+        }
+    </script>
     {% block javascript %}
     {% endblock %}
 </body>

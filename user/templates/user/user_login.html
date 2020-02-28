@@ -1,0 +1,42 @@
+{% extends 'user/base.html' %}
+
+
+{% block head %}
+    <title>Sign in</title>
+    <style>
+        body{
+            margin: 0px;
+            background-image: linear-gradient(45deg,royalblue,skyblue);
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+  
+   <form action="." class="card border-info" method="post" style="max-width: 450px;margin: calc((100vh - 400px) / 2 ) auto 0px auto;padding:10px; ">
+      {% csrf_token %}
+       <h3>Sign In</h3>
+       <hr/>
+       <div class="form-group">
+           <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+           {{ form.username }}
+       </div>
+       <div class="form-group">
+           <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+           {{ form.password }}
+       </div>
+       <p class="text-right small muted mb-4"><a href="">Forgot Password?</a></p>
+       <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+       <p class=" mt-2 text-muted text-center small">New Here?<a href=""> Sign Up</a></p>
+   </form>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // Add some bootstrap styles to the form
+        $('#id_username').attr('class','form-control');
+        $('#id_password').attr('class','form-control');
+    </script>
+{% endblock %}

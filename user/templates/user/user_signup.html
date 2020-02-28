@@ -1,0 +1,26 @@
+{% extends 'user/base.html' %}
+
+
+{% block head %}
+    <title>Sign Up</title>
+{% endblock %}
+{% block content %}
+    <form action="." method = 'post'>
+        {% csrf_token %}
+        <h3>Sign Up</h3>
+        <hr/>
+<!--
+        <div class="form-group">
+            <label for = {{ form. }}></label>
+        </div>
+-->
+       {{form}}
+       <button class="btn btn-primary btn-block">Sign Up</button>
+    </form>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $('#id_password1').attr('class','form-control');
+        $('#id_password2').attr('class','form-control');
+    </script>
+{% endblock %}
