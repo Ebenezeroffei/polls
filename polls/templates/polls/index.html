@@ -5,4 +5,11 @@
     <title>Home</title>
 {% endblock %}
 {% block content %}
+    <div class="mt-5">
+        {% if messages %}
+           {% for message in messages %}
+                <p class="alert alert-success border-success text-center">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}
