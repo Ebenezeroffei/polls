@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.views import generic,View
+from .models import Question
 
 # Create your views here.
 
-class HomeView(View):
-    def dispatch(self,request,*args,**kwargs):
-        return render(self.request,'polls/index.html')
+class HomeView(generic.ListView):
+    model = Question
+    template_name = 'polls/index.html'
+    context_object_name = 'questions'
     

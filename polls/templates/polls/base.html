@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <link rel="stylesheet" type="text/css" href="{% static 'polls\bootstrap.min.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'polls\all.min.css' %}"/>
     {% block head %}
@@ -25,21 +26,22 @@
               <li class="nav-item">
                 <a class="nav-link" href="#">New Poll</a>
               </li>
-<!--
-              <li class="nav-item">
-                <a class="nav-link" href="#" tabindex="-1">User</a>
-              </li>
--->
-           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
+               <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      User
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                     {% if user.is_authenticated %}
+                          <a class="dropdown-item" href="#">Profile</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'user:logout' %}">Logout</a>
+                      {% else %}
+                          <a class="dropdown-item" href="{% url 'user:signin' %}">Login</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'user:signup' %}">Register</a>
+                      {% endif %}
+                    </div>
+                </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" style="width: calc(100% - 250px)">
               <input class="form-control mr-sm-2 mr-2" type="search" placeholder="Search" style="width: calc(100% - 90px)">
@@ -72,7 +74,7 @@
             else{
                 form.css('width','calc(100% - 250px)');
             }
-            console.log(window.innerWidth)
+//            console.log(window.innerWidth)
         }
     </script>
     {% block javascript %}

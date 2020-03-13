@@ -3,13 +3,74 @@
 
 {% block head %}
     <title>Home</title>
+    <style>
+        p{
+            margin: auto
+        }
+        body{
+            user-select: none;
+        }
+    </style>
 {% endblock %}
 {% block content %}
-    <div class="mt-5">
+    <div class="container mt-5">
         {% if messages %}
            {% for message in messages %}
                 <p class="alert alert-success border-success text-center">{{ message }}</p>
             {% endfor %}
         {% endif %}
+        <div class = 'row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1'>
+            {% for que in questions %}
+                <div class="col">
+                    <div class="card" style="max-width: 200px; margin: auto">
+<!--                      <div class="card-header"></div>-->
+                       <img src="{{ que.question_img.url }}" class='card-img-top' alt = '{{ que.question_text }}'/>
+                        <a href="" style="text-decoration: none">
+                            <div class="pos">
+                                <h5 style="margin: 2px" class="card-title">{{ que.question_text }}</h5>
+                                {% for choice in que.choice_set.all %}
+                                    <div style="margin: 2px;">
+                                        <p class="small text-muted">{{ choice.choice_text }}</p>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <p class="small text-muted votes">{{ choice.votes }} Vote{{ choice.votes|pluralize }}</p>
+                                    </div>
+                                {% endfor %}
+                                <div class="card-footer">
+                                    <p class="small muted text-center text-info">{{ que.comment_set.count }} Comment{{que.comment.set.count|pluralize}}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        // Adjusting the positions of the progress bar
+        let adjustProgressBar = function(){
+            $('.pos').each(function(){
+                // Get the progress bar element
+                let progress = $(this).find('.progress-bar');
+                // Get the votes section
+                let votes = $(this).find('.votes');
+                let votesPos = [];
+                for(let ele of votes){
+                    // Goes through ech number of votes and places it inta a list
+                    votesPos.push(Number(ele.innerHTML.split(' ')[0]));
+                }
+                // Find the maximum vote and adjust the progress bar
+                let highestVote = Math.max(...votesPos);
+                // Adjusts the position of the progress bar
+                for(let index = 0; index < votesPos.length; index++){
+                    progress[index].style.width = `${Math.round((votesPos[index]/highestVote)*100)}%`;
+                    progress[index].innerHTML = `${Math.round((votesPos[index]/highestVote)*100)}%`;
+                }
+            })
+        }
+        adjustProgressBar()
+    </script>
 {% endblock %}
