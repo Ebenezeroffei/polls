@@ -26,3 +26,24 @@ class RegisterVoteView(View):
             'current_vote': current_vote,
         }
         return JsonResponse(data)
+    
+class SaveCommentView(View):
+    
+    def get(self,request,*args,**kwargs):
+        # First get the comment and the question id
+        comment = request.GET.get('comment',None)
+        question_id = int(request.GET.get('question_id',None))
+        print(comment)
+        print(question_id)
+        # Get the question object
+        question = get_object_or_404(Question,id = question_id )
+        # Create and save the comment to the question
+        question.comment_set.create(
+            comment_text = comment,
+            author = request.user,
+        ).save()
+        
+        data = {
+            'total_comments':question.comment_set.count(),
+        }
+        return JsonResponse(data)

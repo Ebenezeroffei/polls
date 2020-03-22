@@ -39,8 +39,20 @@
             <hr style = 'margin: 0px;'/>
             <div class="card-body">
                 {% if user.is_authenticated %}
-                    <button class="btn disable btn-block btn-outline-dark">Vote</button>
+                    <button id="vote-button" class="btn disable btn-block btn-outline-dark">Vote</button>
                 {% endif %}
+                <!-- Comments section -->
+                <p class = 'small muted mt-3' id="number-of-comments">{{ object.comment_set.count }} Comment{{ object.comment_set.count|pluralize }}</p>
+                {% if object.comment_set.count > 0 %}
+                {% else %}
+                    <p class="lead text-center mb-5">Be the first to comment on this poll..</p>
+                {% endif %}
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Say Something..">
+                    <div class="input-group-append">
+                        <button class="btn input-group-text disabled" id = 'comment-button'>Send</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,7 +89,7 @@
        
        // Create a function that makes an ajax request to register a vote for a user
        let registerVote = () => {
-           $('button').click(function(){
+           $('#vote-button').click(function(){
                let voteId = $('input[name = "side"]:checked').val();
                if(voteId){
                    // Make an ajax request  
@@ -100,5 +112,48 @@
            })
        }
        registerVote() // invoke the function
+       
+       // Create a function that will save a comment from a user
+       
+       let saveComment = () => {
+           
+           let ajaxRequest = (comment,question_id) =>{
+                   $.ajax({
+                       url: "{% url 'polls:comment' %}",
+                       data: {
+                           'question_id': question_id,
+                           'comment':comment,
+                       },
+                       dataType: 'json',
+                       success: function(data){
+                           // Update the number of comments
+                           $('#number-of-comments').text(`${data["total_comments"]} Comments`);
+                           // Clear the input field
+                           $('input[type = "text"]').val('');
+                       },
+                   })
+               }
+           
+           $("input[type = 'text']").keyup(function(e){
+               
+               if($(this).val()){
+                   $("#comment-button").attr('class','btn input-group-text btn-primary');
+                   if(e.key === 'Enter'){
+                       ajaxRequest($(this).val(),{{ object.id }})
+                   }
+               }
+               else{
+                   $("#comment-button").attr('class','btn disabled input-group-text');
+               }
+           })
+           
+           $('#comment-button').click(function(){
+               let comment = $("input[type = 'text']").val()
+               ajaxRequest(comment,{{ object.id }})
+           })
+           
+       }
+       
+       saveComment() // Invoke the function
    </script>
 {% endblock %}
