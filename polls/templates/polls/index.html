@@ -24,7 +24,7 @@
                 <div class="col">
                     <div class="card" style="max-width: 200px; margin: auto;box-shadow: 0px 2px 5px rgba(0,0,0,0.5);">
 <!--                      <div class="card-header"></div>-->
-                       <img src="{{ que.question_img.url }}" class='card-img-top' alt = '{{ que.question_text }}'/>
+                       <img style="height: 110px;" src="{{ que.question_img.url }}" class='card-img-top' alt = '{{ que.question_text }}'/>
                         <a href="{% url 'polls:question' que.id %}" style="text-decoration: none">
                             <div class="pos">
                                 <h5 style="margin: 2px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" class="card-title">{{ que.question_text }}</h5>
@@ -32,7 +32,7 @@
                                     <div style="margin: 2px;">
                                         <p class="small text-muted">{{ choice.choice_text }}</p>
                                         <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                         </div>
                                         <p class="small text-muted votes">{{ choice.votes }} Vote{{ choice.votes|pluralize }}</p>
                                     </div>
@@ -66,8 +66,10 @@
                 let highestVote = Math.max(...votesPos);
                 // Adjusts the position of the progress bar
                 for(let index = 0; index < votesPos.length; index++){
-                    progress[index].style.width = `${Math.round((votesPos[index]/highestVote)*100)}%`;
-                    progress[index].innerHTML = `${Math.round((votesPos[index]/highestVote)*100)}%`;
+                    if(highestVote !== 0){
+                        progress[index].style.width = `${Math.round((votesPos[index]/highestVote)*100)}%`;
+                        progress[index].innerHTML = `${Math.round((votesPos[index]/highestVote)*100)}%`;
+                    }
                 }
             })
         }

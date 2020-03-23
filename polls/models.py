@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class Question(models.Model):
     question_text = models.CharField(max_length = 200,null = False)
-    question_img = models.ImageField(default = 'default.jpg',upload_to = 'polls_images')
+    question_img = models.ImageField(default = 'polls.png',upload_to = 'polls_images')
     pub_date = models.DateTimeField(default = timezone.now)
     author = models.ForeignKey(User,on_delete = models.CASCADE)
     
@@ -16,7 +16,7 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question,on_delete = models.CASCADE)
     choice_text = models.CharField(max_length = 200,null = False)
-    votes = models.IntegerField()
+    votes = models.IntegerField(default = 0)
     
     def __str__(self):
         return self.choice_text
@@ -25,7 +25,7 @@ class Comment(models.Model):
     question = models.ForeignKey(Question,on_delete = models.CASCADE)
     comment_text = models.CharField(max_length = 200)
     pub_date = models.DateTimeField(default = timezone.now)
-    author = models.ForeignKey(User,on_delete = models.CASCADE)
+    author = models.CharField(max_length = 100);
     
     def __str__(self):
-        return f'{self.author.username}\'s comment'
+        return f'{self.author}\'s comment'

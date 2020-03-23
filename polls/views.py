@@ -33,17 +33,22 @@ class SaveCommentView(View):
         # First get the comment and the question id
         comment = request.GET.get('comment',None)
         question_id = int(request.GET.get('question_id',None))
-        print(comment)
-        print(question_id)
         # Get the question object
         question = get_object_or_404(Question,id = question_id )
-        # Create and save the comment to the question
-        question.comment_set.create(
+        if request.user.is_authenticated:
+            user = request.user.username
+        else:
+            user = 'AnonymousUser'
+#         Create and save the comment to the question
+        com = question.comment_set.create(
             comment_text = comment,
-            author = request.user,
-        ).save()
-        
+            author = user,
+        )
+        com.save()
         data = {
             'total_comments':question.comment_set.count(),
+            'author':com.author,
+            'comment_text':com.comment_text,
+            'pub_date':com.pub_date,
         }
         return JsonResponse(data)

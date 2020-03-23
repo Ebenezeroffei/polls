@@ -1,4 +1,5 @@
 {% extends 'polls/base.html' %}
+{% load static %}
 
 {% block head %}
     <title>{{ object.question_text }}</title>
@@ -9,12 +10,28 @@
         p{
             margin: auto;
         }
+        .avatar{
+            padding: 4px;
+            border-radius: 50%;
+            border: 3px solid lime;
+            display: inline-block;
+            background: lightgray;
+        }
+        .avatat img{
+            width: 32px;
+            height: 32px;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div class="container" style="margin-top: 80px;">
         <div class="card" style = 'max-width: 600px;margin: auto'>
-           <div class="card-header">User's Side</div>
+           <div class="card-header">
+                <p class="avatar" style="background:brown">
+                    <img src="{% static 'polls/images/man-user.png' %}"/>
+                </p>
+                <span class="text-primary lead">{{ object.author.username }}</span>
+           </div>
             <div class="row row-cols-sm-2 row-cols-1 no-gutters">
                 <div class="col">
                    <!-- Image section -->
@@ -22,13 +39,14 @@
                 </div>
                 <!-- The area that displays the votes -->
                 <div class="col" style = 'padding: 3px;'>
+                   <p class="lead">{{ object.question_text }}</p>
                     <div class="choice-container">
                         {% for choice in object.choice_set.all %}
                             <div class="choice">
                                 <p class="mute small">{{ choice.choice_text }}</p>
                                 <input type="radio" name="side" value="{{ choice.id }}" style="background: white;margin:0px 2px 0px 0px;cursor: pointer;">
                                 <div class="progress" style="cursor: pointer;display: inline-block;width: calc(100% - 25px)">
-                                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                                 </div>
                                 <p class="mute small votes">{{ choice.votes }} Vote{{ choice.votes|pluralize }}</p>
                             </div>
@@ -43,11 +61,31 @@
                 {% endif %}
                 <!-- Comments section -->
                 <p class = 'small muted mt-3' id="number-of-comments">{{ object.comment_set.count }} Comment{{ object.comment_set.count|pluralize }}</p>
-                {% if object.comment_set.count > 0 %}
-                {% else %}
-                    <p class="lead text-center mb-5">Be the first to comment on this poll..</p>
-                {% endif %}
-                <div class="input-group">
+                <div class="comment-container">
+                    {% if object.comment_set.count > 0 %}
+                       <hr style = 'margin: 4px auto;'/>
+                            {% for comment in object.comment_set.all %}
+                               {% cycle 'lightgray' 'turquoise' 'lightgreen' 'lightcoral' 'lightblue' 'lightpink' 'darkorchid' 'crimson' 'skyblue' 'darkorange' as color silent %}
+                                <div style="position: relative">
+                                   <p class="avatar" style=" position: absolute; top: 0px; 
+                                     background:{{ color }} ">
+                                       <img src="{% static 'polls/images/man-user.png' %}"/>
+                                   </p>
+                                    <p style="margin-left: 50px">
+                                       <span class="text-info">{{ comment.author }}</span>
+                                         - {{ comment.comment_text }}<br/>
+                                        <span class="small" style="font-size: 12px;color: #535353;">
+                                            {{ comment.pub_date }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <hr style = 'margin: 4px auto;'/>
+                            {% endfor %}
+                    {% else %}
+                        <p class="lead text-center">Be the first to comment on this poll..</p>
+                    {% endif %}
+                </div>
+                <div class="input-group mt-3">
                     <input type="text" class="form-control" placeholder="Say Something..">
                     <div class="input-group-append">
                         <button class="btn input-group-text disabled" id = 'comment-button'>Send</button>
@@ -72,8 +110,10 @@
             positions = positions.map(x => Math.round((x/highestVote) * 100));
             // Adjust the progressbar
             for(let ele = 0; ele < progressbar.length; ele++){
-                progressbar[ele].innerHTML = `${positions[ele]}%`;
-                progressbar[ele].style.width = `${positions[ele]}%`;
+                if(highestVote !== 0){
+                    progressbar[ele].innerHTML = `${positions[ele]}%`;
+                    progressbar[ele].style.width = `${positions[ele]}%`;
+                }
             }
             
         }
@@ -130,6 +170,26 @@
                            $('#number-of-comments').text(`${data["total_comments"]} Comments`);
                            // Clear the input field
                            $('input[type = "text"]').val('');
+                           // Update the comments
+                           let colors = ['lightgray','turquoise','lightgreen','lightcoral','lightblue','lightpink','darkorchid','crimson','skyblue','darkorange'];
+                           let colorIndex = Math.round(Math.random() * 10);
+                           $('.comment-container').append(
+                               `
+                                <div style="position: relative">
+                                   <p class="avatar" style=" position: absolute; top: 0px; background: ${colors[colorIndex]}">
+                                       <img src="{% static 'polls/images/man-user.png' %}"/>
+                                   </p>
+                                    <p style="margin-left: 50px">
+                                       <span class="text-info">${data['author']}</span>
+                                         - ${data['comment_text']}<br/>
+                                        <span class="small" style="font-size: 12px;color: #535353;">
+                                            ${data['pub_date']}
+                                        </span>
+                                    </p>
+                                </div>
+                                <hr style = 'margin: 4px auto;'/>
+                               `
+                           );
                        },
                    })
                }
