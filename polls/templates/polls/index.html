@@ -22,7 +22,8 @@
         <div class = 'row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1'>
             {% for que in questions %}
                 <div class="col">
-                    <div class="card" style="max-width: 200px; margin: auto;box-shadow: 0px 2px 5px rgba(0,0,0,0.5);">
+                    <div class="card mt-3" style="max-width: 200px; margin: auto;box-shadow: 0px 2px 5px rgba(0,0,0,0.5);position: relative;">
+                    <span style="position: absolute;top: 5px;right: 5px; background:rgba(175,36,203,.8)" class="badge badge-primary">Hello</span>
 <!--                      <div class="card-header"></div>-->
                        <img style="height: 110px;" src="{{ que.question_img.url }}" class='card-img-top' alt = '{{ que.question_text }}'/>
                         <a href="{% url 'polls:question' que.id %}" style="text-decoration: none">

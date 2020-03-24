@@ -1,18 +1,21 @@
 # Detail View
-- Only users can vote
++ Only users can vote
 + Create the list view displaying the comments
-- Users can only vote once
-- Disable the vote button when a user votes
++ Users can only vote once
++ Disable the vote button when a user votes
 + Design the top bar for the user's side
-- Any one can comment wheather user or non user
++ Any one can comment wheather user or non user
 + All non users will be names anonymous
-- Use random to select random colors
-- Change the date format for incoming data when a comment has been saved
++ Use random to select random colors
++ Change the date format for incoming data when a comment has been saved
++ Disable the checkbutton if a user is not logged in
 
 # General
-- Make a default image for every poll
++ Make a default image for every poll
 - Categorise the polls into 2,3 or 4 choices
 - Work on the searchbar
 + Restructure the comments model to make the author column accept charfileds as author names
 - Do the profile section
+- Create the badge showing the time a poll was displayed
+- Check on the sign in part of the app
 

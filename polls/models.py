@@ -29,3 +29,10 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'{self.author}\'s comment'
+    
+class CentralVotes(models.Model):
+    question = models.ForeignKey(Question,on_delete = models.CASCADE)
+    user = models.CharField(max_length = 100)
+    
+    def __str__(self):
+        return f"{self.user} - {self.question.question_text}"
