@@ -99,6 +99,8 @@
 {% endblock %}
 {% block javascript %}
    <script>
+       //Get the list of votes
+       let totalVotes = 0;
        let hasUserVoted = false;
         // A function that adjusts the value of the progress bar
         let adjustProgressbar = () => {
@@ -229,5 +231,47 @@
        }
        
        saveComment() // Invoke the function
+           
+       // Create a function that will continue checking if another user has voted
+       let votesUpdater = () =>{
+           // Get the question id
+           let questionId = {{ object.id }};
+           // First get the current total votes in the frontend
+           $('.votes').each(function(){
+               totalVotes += Number($(this).text().split(' ')[0]);
+           })
+           // Make an ajax request that will go and get the latest number of votes from the database
+           $.ajax({
+               'url': "{% url 'polls:updated_votes' %}",
+               data: {
+                   "question_id": questionId,
+                   "total_votes": totalVotes, 
+               },
+               dataType: 'json',
+               success: function(data){
+                   let updatedTotalVotes = data["updated_total_votes"];
+                   let updatedVotes = data["updated_votes"];
+                   // Another user somewhere has voted
+                   if( updatedTotalVotes != totalVotes ){
+                       let votes = document.getElementsByClassName('votes');
+                       // Update the number of votes in the frontend
+                       for(let index = 0; index < updatedVotes.length; index++){
+                           // Update the votes
+                           if(updatedVotes[index] < 1){
+                               votes[index].innerHTML = `${updatedVotes[index]} Vote`;
+                           }
+                           else{
+                                votes[index].innerHTML = `${updatedVotes[index]} Votes`;
+                           }
+                       }
+                       // Update the position of the progressbar
+                       adjustProgressbar()
+                   }
+                   totalVotes = 0; // Reset the total votes
+               }
+           })
+       }
+       // Invoke the function multiple times
+        let multipleCall = setInterval(votesUpdater,1000);
    </script>
 {% endblock %}

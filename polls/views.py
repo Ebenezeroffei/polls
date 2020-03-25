@@ -71,3 +71,30 @@ class SaveCommentView(View):
             'pub_date': f"{date} {time}",
         }
         return JsonResponse(data)
+
+    
+class UpdatedVotesView(View):
+    """ This class returns a list of updated votes from the database to an ajax request made. """
+    
+    def get(self,request,*args,**kwargs):
+        # Get the question id and the total votes from the frontend
+        question_id = int(request.GET.get('question_id',None))
+        total_votes = int(request.GET.get('total_votes',None))
+        # Get the question
+        question = get_object_or_404(Question,id = question_id)
+        # Get the total number of votes in the database
+        updated_total_votes = 0
+        for choice in question.choice_set.all():
+            updated_total_votes += choice.votes
+            
+        data = {
+            'updated_total_votes': updated_total_votes,
+        }
+        
+        # Total votes from the frontend and the database are different 
+        if total_votes != updated_total_votes:
+            # Make a list of all the votes in the question
+            updated_votes = list(str(choice.votes) for choice in question.choice_set.all())
+            data["updated_votes"] = updated_votes
+            
+        return JsonResponse(data)
