@@ -68,7 +68,7 @@
                        <hr style = 'margin: 4px auto;'/>
                             {% for comment in object.comment_set.all %}
                                {% cycle 'lightgray' 'turquoise' 'lightgreen' 'lightcoral' 'lightblue' 'lightpink' 'darkorchid' 'crimson' 'skyblue' 'darkorange' as color silent %}
-                                <div style="position: relative">
+                                <div style="position: relative" class="comment-wrapper">
                                    <p class="avatar" style=" position: absolute; top: 0px; 
                                      background:{{ color }} ">
                                        <img src="{% static 'polls/images/man-user.png' %}"/>
@@ -168,6 +168,30 @@
            })
        }
        registerVote() // invoke the function
+           
+        // Create a function that only updates the comments section in the frontend
+        
+        let updateFrontendCommentsSection = (comment,date,author) => {
+            let colors = ['lightgray','turquoise','lightgreen','lightcoral','lightblue','lightpink','darkorchid','crimson','skyblue','darkorange'];
+           let colorIndex = Math.round(Math.random() * 10);
+           $('.comment-container').append(
+               `
+                <div style="position: relative" class = 'comment-wrapper'>
+                   <p class="avatar" style=" position: absolute; top: 0px; background: ${colors[colorIndex]}">
+                       <img src="{% static 'polls/images/man-user.png' %}"/>
+                   </p>
+                    <p style="margin-left: 50px">
+                       <span class="text-info">${author}</span>
+                         - ${comment}<br/>
+                        <span class="small" style="font-size: 12px;color: #535353;">
+                            ${date}
+                        </span>
+                    </p>
+                </div>
+                <hr style = 'margin: 4px auto;'/>
+               `
+           );
+        }
        
        // Create a function that will save a comment from a user
        
@@ -184,28 +208,8 @@
                        success: function(data){
                            // Update the number of comments
                            $('#number-of-comments').text(`${data["total_comments"]} Comments`);
-                           // Clear the input field
-                           $('input[type = "text"]').val('');
                            // Update the comments
-                           let colors = ['lightgray','turquoise','lightgreen','lightcoral','lightblue','lightpink','darkorchid','crimson','skyblue','darkorange'];
-                           let colorIndex = Math.round(Math.random() * 10);
-                           $('.comment-container').append(
-                               `
-                                <div style="position: relative">
-                                   <p class="avatar" style=" position: absolute; top: 0px; background: ${colors[colorIndex]}">
-                                       <img src="{% static 'polls/images/man-user.png' %}"/>
-                                   </p>
-                                    <p style="margin-left: 50px">
-                                       <span class="text-info">${data['author']}</span>
-                                         - ${data['comment_text']}<br/>
-                                        <span class="small" style="font-size: 12px;color: #535353;">
-                                            ${data['pub_date']}
-                                        </span>
-                                    </p>
-                                </div>
-                                <hr style = 'margin: 4px auto;'/>
-                               `
-                           );
+                           updateFrontendCommentsSection(data["comment_text"],data["pub_date"],data["author"])
                        },
                    })
                }
@@ -213,9 +217,13 @@
            $("input[type = 'text']").keyup(function(e){
                
                if($(this).val()){
+                   console.log($(this).val())
                    $("#comment-button").attr('class','btn input-group-text btn-primary');
+                   let value = $(this).val();
                    if(e.key === 'Enter'){
-                       ajaxRequest($(this).val(),{{ object.id }})
+                       // Clear the input field
+                       $(this).val('');
+                       ajaxRequest(value,{{ object.id }})
                    }
                }
                else{
@@ -225,6 +233,8 @@
            
            $('#comment-button').click(function(){
                let comment = $("input[type = 'text']").val()
+               // Clear the input field
+               $('input[type = "text"]').val('');
                ajaxRequest(comment,{{ object.id }})
            })
            
@@ -272,6 +282,41 @@
            })
        }
        // Invoke the function multiple times
-        let multipleCall = setInterval(votesUpdater,1000);
+//        let multipleVotesCall = setInterval(votesUpdater,1000);
+       
+       // Create a function that will update the comments whenever another user comments on a question
+       let commentsUpdater  = () => {
+           // Get the total comments and the question id
+           let questionId = {{ object.id }};
+           let totalComments = document.getElementsByClassName('comment-wrapper').length;
+//           console.log(totalComments)
+           
+           // Make an ajax request that will get the updated number of comments to a question
+           $.ajax({
+               "url": "{% url 'polls:updated_comments' %}",
+               "data": {
+                   "question_id": questionId,
+                   "total_comments": totalComments,
+               },
+               "dataType": "json",
+               "success": function(data){
+                   let updatedTotalComments = data["updated_total_comments"];
+                   if(updatedTotalComments !== totalComments){
+                       console.log("Someone has commented");
+                       // Update the frontend section of the comments
+                       let updatedComments = data['updated_comments'];
+                       console.log(updatedComments.length)
+                       for(let ele of updatedComments){
+                           updateFrontendCommentsSection(ele["comment"],ele["date"],ele["author"]);
+                       }
+                       
+                   }
+                   else{
+                       console.log("No one has commented");
+                   }
+               }
+           })
+       }
+//      let multipleCommentsCall = setInterval(commentsUpdater,1000);
    </script>
 {% endblock %}

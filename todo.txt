@@ -9,6 +9,7 @@
 + Use random to select random colors
 + Change the date format for incoming data when a comment has been saved
 + Disable the checkbutton if a user is not logged in
+- There seems to be  a liitle problem of duplication when the comment is beign updated
 
 # General
 + Make a default image for every poll

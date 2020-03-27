@@ -98,3 +98,36 @@ class UpdatedVotesView(View):
             data["updated_votes"] = updated_votes
             
         return JsonResponse(data)
+    
+
+class UpdatedCommentsView(View):
+    """ This class gets the current number of comments attached to a question and returns it to an ajax request """
+    
+    def get(self,request,*args,**kwargs):
+        question_id = int(request.GET.get('question_id',None))
+        total_comments = int(request.GET.get('total_comments'))
+        # Get the question
+        question = get_object_or_404(Question,id = question_id)
+        updated_total_comments = question.comment_set.all().count()
+        data = {
+            "updated_total_comments":updated_total_comments,
+        }
+        
+        if total_comments != updated_total_comments:
+            updated_comments = []
+            for com in question.comment_set.all()[total_comments::]:
+                date = com.pub_date.date()
+                time = com.pub_date.time()
+                date = date.strftime("%a %b %d, %Y")
+                time = time.strftime("%r")
+                
+                updated_comments.append(
+                        {
+                            'comment': com.comment_text,
+                            'date': f"{date} {time}",
+                            'author': com.author,
+                        }
+                )
+            data["updated_comments"] = updated_comments
+        
+        return JsonResponse(data)

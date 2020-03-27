@@ -8,4 +8,5 @@ urlpatterns = [
     path('vote/',views.RegisterVoteView.as_view(),name = 'vote'),
     path('comment/',views.SaveCommentView.as_view(),name = 'comment'),
     path('updated-votes/',views.UpdatedVotesView.as_view(),name = 'updated_votes'),
+    path('updated-comments/',views.UpdatedCommentsView.as_view(),name = 'updated_comments'),
 ]
